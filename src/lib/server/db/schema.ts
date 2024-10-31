@@ -15,5 +15,14 @@ export const session = pgTable('session', {
 	expiresAt: timestamp('expires_at', { withTimezone: true, mode: 'date' }).notNull()
 });
 
+export const exam = pgTable('exam', {
+	id: text('id').$defaultFn(() => crypto.randomUUID()),
+	title: text('title').notNull(),
+	date: timestamp('date', { mode: 'date', withTimezone: true }),
+	user: text('user')
+		.references(() => user.id)
+		.notNull()
+});
+
 export type Session = typeof session.$inferSelect;
 export type User = typeof user.$inferSelect;
