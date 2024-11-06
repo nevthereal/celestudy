@@ -1,4 +1,4 @@
-import { pgTable, text, integer, timestamp, serial } from 'drizzle-orm/pg-core';
+import { pgTable, text, integer, timestamp, serial, boolean } from 'drizzle-orm/pg-core';
 
 export const user = pgTable('user', {
 	id: text('id').primaryKey(),
@@ -15,7 +15,7 @@ export const session = pgTable('session', {
 	expiresAt: timestamp('expires_at', { withTimezone: true, mode: 'date' }).notNull()
 });
 
-export const exam = pgTable('exam', {
+export const project = pgTable('project', {
 	id: serial('id').primaryKey(),
 	title: text('title').notNull(),
 	date: timestamp('date', { mode: 'date', withTimezone: true }),
@@ -27,7 +27,14 @@ export const exam = pgTable('exam', {
 export const note = pgTable('note', {
 	id: serial('id').primaryKey(),
 	body: text('body').notNull(),
-	exam: integer('exam').references(() => exam.id, { onDelete: 'cascade' })
+	projectId: integer('project_id').references(() => project.id, { onDelete: 'cascade' })
+});
+
+export const task = pgTable('task', {
+	id: serial('id'),
+	projectId: integer('project_id').references(() => project.id, { onDelete: 'cascade' }),
+	completed: boolean('completed'),
+	body: text('body').notNull()
 });
 
 export type Session = typeof session.$inferSelect;
